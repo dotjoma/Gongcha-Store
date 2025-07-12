@@ -1,3 +1,9 @@
+<?php
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -68,6 +74,101 @@
                 font-size: 1rem;
             }
         }
+
+        .gc-modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0; top: 0; width: 100vw; height: 100vh;
+            background: rgba(24,23,28,0.85);
+            align-items: center;
+            justify-content: center;
+        }
+        .gc-modal.show {
+            display: flex;
+        }
+        .gc-modal-content {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 24px rgba(190,22,53,0.13);
+            padding: 40px 36px 32px 36px;
+            min-width: 340px;
+            max-width: 95vw;
+            width: 400px;
+            text-align: center;
+            position: relative;
+            animation: gcModalFadeIn 0.2s;
+        }
+        @keyframes gcModalFadeIn {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .gc-modal-close {
+            position: absolute;
+            top: 18px; right: 22px;
+            font-size: 2rem;
+            color: #be1635;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .modal-title {
+            font-size: 2rem;
+            color: #be1635;
+            margin-bottom: 24px;
+            font-weight: 700;
+        }
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .modal-form input {
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            font-family: 'Georgia', serif;
+        }
+        .modal-form button {
+            background: #be1635;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .modal-form button:hover {
+            background: #a0122b;
+        }
+        .modal-link {
+            margin-top: 18px;
+            font-size: 0.98rem;
+        }
+        .modal-link a {
+            color: #be1635;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .modal-link a:hover {
+            text-decoration: underline;
+        }
+        .modal-msg {
+            margin-bottom: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .gc-modal-content {
+                min-width: 0;
+                width: 95vw;
+                padding: 24px 8vw 24px 8vw;
+            }
+        }
     </style>
 </head>
 <body>
@@ -104,115 +205,75 @@
             </div>
         </div>
     </div>
-    <style>
-    .gc-modal {
-        display: none;
-        position: fixed;
-        z-index: 1001;
-        left: 0; top: 0; width: 100vw; height: 100vh;
-        background: rgba(24,23,28,0.85);
-        align-items: center;
-        justify-content: center;
-    }
-    .gc-modal.show {
-        display: flex;
-    }
-    .gc-modal-content {
-        background: #fff;
-        border-radius: 14px;
-        box-shadow: 0 2px 24px rgba(190,22,53,0.13);
-        padding: 40px 36px 32px 36px;
-        min-width: 340px;
-        max-width: 95vw;
-        width: 400px;
-        text-align: center;
-        position: relative;
-        animation: gcModalFadeIn 0.2s;
-    }
-    @keyframes gcModalFadeIn {
-        from { transform: translateY(-30px); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
-    }
-    .gc-modal-close {
-        position: absolute;
-        top: 18px; right: 22px;
-        font-size: 2rem;
-        color: #be1635;
-        cursor: pointer;
-        font-weight: 700;
-    }
-    .modal-title {
-        font-size: 2rem;
-        color: #be1635;
-        margin-bottom: 24px;
-        font-weight: 700;
-    }
-    .modal-form {
-        display: flex;
-        flex-direction: column;
-        gap: 18px;
-    }
-    .modal-form input {
-        padding: 12px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        font-size: 1rem;
-        font-family: 'Georgia', serif;
-    }
-    .modal-form button {
-        background: #be1635;
-        color: #fff;
-        border: none;
-        border-radius: 6px;
-        padding: 12px;
-        font-size: 1.1rem;
-        font-weight: 700;
-        cursor: pointer;
-        transition: background 0.2s;
-    }
-    .modal-form button:hover {
-        background: #a0122b;
-    }
-    .modal-link {
-        margin-top: 18px;
-        font-size: 0.98rem;
-    }
-    .modal-link a {
-        color: #be1635;
-        text-decoration: none;
-        font-weight: 600;
-        cursor: pointer;
-    }
-    .modal-link a:hover {
-        text-decoration: underline;
-    }
-    @media (max-width: 600px) {
-        .gc-modal-content {
-            min-width: 0;
-            width: 95vw;
-            padding: 24px 8vw 24px 8vw;
-        }
-    }
-    </style>
     <script>
-    function openModal(id) {
-        document.getElementById(id).classList.add('show');
-    }
-    function closeModal(id) {
-        document.getElementById(id).classList.remove('show');
-    }
-    function switchModal(closeId, openId) {
-        closeModal(closeId);
-        setTimeout(function(){ openModal(openId); }, 180);
-    }
-    // Optional: Close modal on background click
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.gc-modal').forEach(function(modal) {
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) closeModal(modal.id);
+        function openModal(id) {
+            document.getElementById(id).classList.add('show');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+        function switchModal(closeId, openId) {
+            closeModal(closeId);
+            setTimeout(function(){ openModal(openId); }, 180);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.gc-modal').forEach(function(modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) closeModal(modal.id);
+                });
+            });
+
+            // AJAX for login
+            document.querySelector('#loginModal .modal-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const form = this;
+                const data = new FormData(form);
+                data.append('action', 'login');
+                fetch('includes/process_auth.php', {
+                    method: 'POST',
+                    body: data
+                })
+                .then(res => res.json())
+                .then(res => {
+                    let msg = form.querySelector('.modal-msg');
+                    if (!msg) {
+                        msg = document.createElement('div');
+                        msg.className = 'modal-msg';
+                        form.prepend(msg);
+                    }
+                    msg.textContent = res.message;
+                    msg.style.color = res.success ? '#27ae60' : '#be1635';
+                    if (res.success) setTimeout(() => window.location.reload(), 900);
+                })
+                .catch(() => alert('Network error.'));
+            });
+
+            // AJAX for register
+            document.querySelector('#registerModal .modal-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const form = this;
+                const data = new FormData(form);
+                data.append('action', 'register');
+                fetch('includes/process_auth.php', {
+                    method: 'POST',
+                    body: data
+                })
+                .then(res => res.json())
+                .then(res => {
+                    let msg = form.querySelector('.modal-msg');
+                    if (!msg) {
+                        msg = document.createElement('div');
+                        msg.className = 'modal-msg';
+                        form.prepend(msg);
+                    }
+                    msg.textContent = res.message;
+                    msg.style.color = res.success ? '#27ae60' : '#be1635';
+                    if (res.success) setTimeout(() => switchModal('registerModal','loginModal'), 1200);
+                })
+                .catch(() => alert('Network error.'));
             });
         });
-    });
     </script>
     <div class="landing-bg">
         <div class="landing-content">
