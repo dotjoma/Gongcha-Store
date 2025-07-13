@@ -51,14 +51,129 @@
         .menu-card-category { font-size: 0.98rem; color: #888; margin-bottom: 8px; }
         .menu-card-prices { font-size: 1.01rem; color: #222; margin-bottom: 2px; }
         .menu-card-prices span { margin-right: 8px; }
+        
+        /* Featured Products Styles */
+        .featured-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px 60px 20px;
+            margin-top: 90px;
+        }
+        .featured-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #be1635;
+            font-weight: 800;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+        }
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        .featured-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(190,22,53,0.12);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .featured-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 30px rgba(190,22,53,0.2);
+        }
+        .featured-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .featured-card-content {
+            padding: 20px;
+        }
+        .featured-card-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #be1635;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .featured-card-category {
+            font-size: 1rem;
+            color: #888;
+            margin-bottom: 12px;
+            text-align: center;
+            font-style: italic;
+        }
+        .featured-card-prices {
+            text-align: center;
+        }
+        .featured-price {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #222;
+            background: linear-gradient(135deg, #be1635, #d41e3f);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
         @media (max-width: 700px) {
             .menu-section { padding: 18px 0 32px 0; margin-top: 70px; }
             .menu-title { font-size: 2rem; }
             .menu-grid { gap: 18px; }
+            .featured-section { padding: 20px 15px 40px 15px; margin-top: 70px; }
+            .featured-title { font-size: 2rem; margin-bottom: 30px; }
+            .featured-grid { gap: 20px; }
+            .featured-card img { height: 160px; }
+            .featured-card-name { font-size: 1.1rem; }
+            .featured-price { font-size: 1.2rem; padding: 6px 12px; }
         }
     </style>
 </head>
 <body>
+    <!-- Featured Products Section -->
+    <div class="featured-section">
+        <div class="featured-title">FEATURED PRODUCTS</div>
+        <div class="featured-grid">
+            <?php 
+            // Get featured products (latest 6 products or you can add a 'featured' field to your database)
+            $featuredProducts = array_slice($products, 0, 6);
+            foreach ($featuredProducts as $prod): 
+            ?>
+                <div class="featured-card">
+                    <?php if ($prod['image']): ?>
+                        <img src="data:image/jpeg;base64,<?= base64_encode($prod['image']) ?>" alt="<?= htmlspecialchars($prod['name']) ?>">
+                    <?php else: ?>
+                        <img src="../assets/placeholder.png" alt="No Image">
+                    <?php endif; ?>
+                    <div class="featured-card-content">
+                        <div class="featured-card-name"><?= htmlspecialchars($prod['name']) ?></div>
+                        <div class="featured-card-category"><?= htmlspecialchars($prod['category_name']) ?></div>
+                        <div class="featured-card-prices">
+                            <?php 
+                            $priceDisplayed = false;
+                            foreach (["small","medium","large"] as $sz): 
+                                if (isset($productSizes[$prod['id']][$sz]) && !$priceDisplayed): 
+                                    $priceDisplayed = true;
+                            ?>
+                                <span class="featured-price">₱<?= number_format($productSizes[$prod['id']][$sz],2) ?></span>
+                            <?php 
+                                break;
+                                endif; 
+                            endforeach; 
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
     <div class="menu-section">
         <div class="menu-title">OUR MENU</div>
         <div class="menu-filters">

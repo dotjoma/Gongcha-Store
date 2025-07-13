@@ -35,6 +35,15 @@
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.45);
             z-index: 1;
+            animation: backgroundPulse 4s ease-in-out infinite;
+        }
+        @keyframes backgroundPulse {
+            0%, 100% {
+                background: rgba(0,0,0,0.45);
+            }
+            50% {
+                background: rgba(0,0,0,0.5);
+            }
         }
         .landing-content {
             position: relative;
@@ -48,6 +57,9 @@
             font-weight: 600;
             margin-bottom: 32px;
             letter-spacing: 2px;
+            animation: fadeInUp 1.2s ease-out;
+            opacity: 0;
+            animation-fill-mode: forwards;
         }
         .see-more-btn {
             background: #fff;
@@ -58,12 +70,120 @@
             padding: 16px 40px;
             font-size: 1.1rem;
             cursor: pointer;
-            transition: background 0.2s, color 0.2s;
+            transition: all 0.3s ease;
             box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            animation: fadeInUp 1.2s ease-out 0.3s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+            transform: translateY(20px);
         }
         .see-more-btn:hover {
             background: #e50914;
             color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        /* Scroll-triggered animations */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        
+        .animate-on-scroll.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .animate-on-scroll.slide-left {
+            transform: translateX(-50px);
+        }
+        
+        .animate-on-scroll.slide-left.animate {
+            transform: translateX(0);
+        }
+        
+        .animate-on-scroll.slide-right {
+            transform: translateX(50px);
+        }
+        
+        .animate-on-scroll.slide-right.animate {
+            transform: translateX(0);
+        }
+        
+        .animate-on-scroll.scale-in {
+            transform: scale(0.8) translateY(30px);
+        }
+        
+        .animate-on-scroll.scale-in.animate {
+            transform: scale(1) translateY(0);
         }
         @media (max-width: 700px) {
             .landing-content h1 {
@@ -97,11 +217,17 @@
             width: 400px;
             text-align: center;
             position: relative;
-            animation: gcModalFadeIn 0.2s;
+            animation: gcModalFadeIn 0.4s ease-out;
         }
         @keyframes gcModalFadeIn {
-            from { transform: translateY(-30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from { 
+                transform: translateY(-50px) scale(0.9); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateY(0) scale(1); 
+                opacity: 1; 
+            }
         }
         .gc-modal-close {
             position: absolute;
@@ -138,10 +264,31 @@
             font-size: 1.1rem;
             font-weight: 700;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
         .modal-form button:hover {
             background: #a0122b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(190, 22, 53, 0.3);
+        }
+        .modal-form button:active {
+            transform: translateY(0);
+        }
+        .modal-form input {
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+            font-family: 'Georgia', serif;
+            transition: all 0.3s ease;
+        }
+        .modal-form input:focus {
+            outline: none;
+            border-color: #be1635;
+            box-shadow: 0 0 0 3px rgba(190, 22, 53, 0.1);
+            transform: translateY(-1px);
         }
         .modal-link {
             margin-top: 18px;
@@ -274,6 +421,27 @@
                 .catch(() => alert('Network error.'));
             });
         });
+
+        // Scroll animations
+        function animateOnScroll() {
+            const elements = document.querySelectorAll('.animate-on-scroll');
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('animate');
+                }
+            });
+        }
+
+        // Add scroll event listener
+        window.addEventListener('scroll', animateOnScroll);
+        
+        // Initial check for elements in view
+        document.addEventListener('DOMContentLoaded', function() {
+            animateOnScroll();
+        });
     </script>
     <div class="landing-bg">
         <div class="landing-content">
@@ -330,12 +498,16 @@
         font-weight: 400;
         margin-bottom: 32px;
         line-height: 1.1;
+        animation: slideInLeft 1s ease-out 0.5s;
+        opacity: 1;
+        animation-fill-mode: forwards;
     }
     .party-left .red-text {
         color: #be1635;
         font-weight: 500;
         font-size: 3.2rem;
         font-family: 'Georgia', serif;
+        animation: pulse 2s ease-in-out infinite 2s;
     }
     .party-btn {
         background: #222;
@@ -349,30 +521,43 @@
         letter-spacing: 2px;
         margin-top: 16px;
         cursor: pointer;
-        transition: background 0.2s, color 0.2s;
+        transition: all 0.3s ease;
         display: flex;
         align-items: center;
         gap: 8px;
+        animation: bounceIn 1s ease-out 1s;
+        opacity: 1;
+        animation-fill-mode: forwards;
     }
     .party-btn .arrow {
         font-size: 1.1em;
         margin-left: 4px;
+        transition: transform 0.3s ease;
     }
     .party-btn:hover {
         background: #be1635;
         color: #fff;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(190, 22, 53, 0.3);
+    }
+    .party-btn:hover .arrow {
+        transform: translateX(5px);
     }
     .party-right {
         flex: 2 1 500px;
         display: flex;
         align-items: center;
         justify-content: center;
+        animation: slideInRight 1s ease-out 0.8s;
+        opacity: 1;
+        animation-fill-mode: forwards;
     }
     .party-img {
         max-width: 520px;
         width: 100%;
         height: auto;
         display: block;
+        animation: float 3s ease-in-out infinite 2.5s;
     }
     @media (max-width: 900px) {
         .party-container {
