@@ -325,9 +325,9 @@
         <div class="gc-modal-content">
             <span class="gc-modal-close" onclick="closeModal('loginModal')">&times;</span>
             <div class="modal-title">Login</div>
-            <form class="modal-form" method="post" action="#">
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="password" placeholder="Password" required>
+            <form class="modal-form" method="post" action="#" autocomplete="off">
+                <input type="email" name="email" placeholder="Email" required autocomplete="off">
+                <input type="password" name="password" placeholder="Password" required autocomplete="off">
                 <button type="submit">Login</button>
             </form>
             <div class="modal-link">
@@ -340,11 +340,11 @@
         <div class="gc-modal-content">
             <span class="gc-modal-close" onclick="closeModal('registerModal')">&times;</span>
             <div class="modal-title">Register</div>
-            <form class="modal-form" method="post" action="#">
-                <input type="text" name="fname" placeholder="First Name" required>
-                <input type="text" name="lname" placeholder="Last Name" required>
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="password" placeholder="Password" required>
+            <form class="modal-form" method="post" action="#" autocomplete="off">
+                <input type="text" name="fname" placeholder="First Name" required autocomplete="off">
+                <input type="text" name="lname" placeholder="Last Name" required autocomplete="off">
+                <input type="email" name="email" placeholder="Email" required autocomplete="off">
+                <input type="password" name="password" placeholder="Password" required autocomplete="off">
                 <button type="submit">Register</button>
             </form>
             <div class="modal-link">
