@@ -31,7 +31,6 @@ $menuHeaderClass = ($currentPage === 'menu.php') ? 'menu-header' : '';
                 <button type="submit" class="nav-auth" style="background:none;border:none;color:#fff;font-weight:700;font-size:1.05rem;cursor:pointer;padding:6px 12px;border-radius:4px;">Logout</button>
             </form>
         <?php endif; ?>
-        <a href="#" class="order-btn">ORDER NOW</a>
     </div>
     </div>
 </nav>

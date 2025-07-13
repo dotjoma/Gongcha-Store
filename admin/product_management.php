@@ -273,6 +273,11 @@ foreach ($sizes as $s) {
                         <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['name']) ?></option>
                     <?php endforeach; ?>
                 </select>
+                <select id="prodFeaturedFilter" style="padding:10px 14px;border-radius:6px;border:1px solid #ccc;font-size:1.05rem;width:180px;max-width:100%;font-family:'Georgia',serif;">
+                    <option value="all">All Products</option>
+                    <option value="featured">Featured Only</option>
+                    <option value="not-featured">Not Featured</option>
+                </select>
             </div>
             <button class="add-prod-btn" onclick="openProdModal()">+ Add Product</button>
             <table class="prod-table" id="prodTable">
@@ -280,6 +285,7 @@ foreach ($sizes as $s) {
                     <th>Image</th>
                     <th>Name</th>
                     <th>Category</th>
+                    <th>Featured</th>
                     <th>Prices</th>
                     <th>Actions</th>
                 </tr>
@@ -288,7 +294,7 @@ foreach ($sizes as $s) {
                 foreach ($products as $prod): 
                     error_log('Processing product: ' . print_r($prod, true));
                 ?>
-                <tr data-cat-id="<?= $prod['category_id'] ?>">
+                <tr data-cat-id="<?= $prod['category_id'] ?>" data-featured="<?= isset($prod['is_featured']) && $prod['is_featured'] ? '1' : '0' ?>">
                     <td>
                         <?php if ($prod['image']): ?>
                             <img src="data:image/jpeg;base64,<?= base64_encode($prod['image']) ?>" class="prod-img" alt="Product Image">
@@ -298,6 +304,13 @@ foreach ($sizes as $s) {
                     </td>
                     <td><?= htmlspecialchars($prod['name']) ?></td>
                     <td><?= htmlspecialchars($prod['category_name']) ?></td>
+                    <td>
+                        <?php if (isset($prod['is_featured']) && $prod['is_featured']): ?>
+                            <span style="background:#27ae60;color:#fff;padding:4px 8px;border-radius:4px;font-size:0.9rem;font-weight:600;">✓ Featured</span>
+                        <?php else: ?>
+                            <span style="color:#999;font-size:0.9rem;">-</span>
+                        <?php endif; ?>
+                    </td>
                     <td>
                         <?php foreach (["small","medium","large"] as $sz): ?>
                             <?php if (isset($productSizes[$prod['id']][$sz])): ?>
@@ -337,6 +350,13 @@ foreach ($sizes as $s) {
                         <input type="number" name="sizes[large]" placeholder="Large" min="0" step="0.01" required>
                     </div>
                 </div>
+                <div style="width:100%;margin-bottom:18px;">
+                    <label style="display:block;text-align:left;font-weight:600;margin-bottom:6px;color:#be1635;">Featured Product:</label>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <input type="checkbox" name="is_featured" id="addProdFeatured" style="width:auto;margin:0;">
+                        <label for="addProdFeatured" style="margin:0;font-weight:500;color:#666;">Show this product in featured section</label>
+                    </div>
+                </div>
                 <button type="submit">Add Product</button>
                 <div class="prod-modal-msg"></div>
             </form>
@@ -364,6 +384,13 @@ foreach ($sizes as $s) {
                         <input type="number" name="sizes[small]" id="editProdSmall" placeholder="Small" min="0" step="0.01" required>
                         <input type="number" name="sizes[medium]" id="editProdMedium" placeholder="Medium" min="0" step="0.01" required>
                         <input type="number" name="sizes[large]" id="editProdLarge" placeholder="Large" min="0" step="0.01" required>
+                    </div>
+                </div>
+                <div style="width:100%;margin-bottom:18px;">
+                    <label style="display:block;text-align:left;font-weight:600;margin-bottom:6px;color:#be1635;">Featured Product:</label>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <input type="checkbox" name="is_featured" id="editProdFeatured" style="width:auto;margin:0;">
+                        <label for="editProdFeatured" style="margin:0;font-weight:500;color:#666;">Show this product in featured section</label>
                     </div>
                 </div>
                 <button type="submit">Save Changes</button>
@@ -456,6 +483,7 @@ foreach ($sizes as $s) {
             document.getElementById('editProdSmall').value = sizes[prod.id]?.small || '';
             document.getElementById('editProdMedium').value = sizes[prod.id]?.medium || '';
             document.getElementById('editProdLarge').value = sizes[prod.id]?.large || '';
+            document.getElementById('editProdFeatured').checked = prod.is_featured == 1;
             // Try to get the image from the table row
             const rowImg = document.querySelector(`button[onclick="openProdEditModal(${prod.id})"]`)
                 ?.closest('tr')
@@ -569,16 +597,21 @@ foreach ($sizes as $s) {
         const prodPagination = document.getElementById('prodPagination');
         const prodFilterInput = document.getElementById('prodFilterInput');
         const prodCategoryFilter = document.getElementById('prodCategoryFilter');
+        const prodFeaturedFilter = document.getElementById('prodFeaturedFilter');
         function prodApplyFilters() {
             const nameVal = prodFilterInput.value.toLowerCase();
             const catVal = prodCategoryFilter.value;
+            const featuredVal = prodFeaturedFilter.value;
             Array.from(prodTable.rows).slice(1).forEach(row => {
                 const prodName = row.children[1]?.textContent.toLowerCase() || '';
                 const prodCat = row.children[2]?.textContent || '';
                 const catId = row.getAttribute('data-cat-id');
+                const isFeatured = row.getAttribute('data-featured');
                 let show = true;
                 if (nameVal && !prodName.includes(nameVal)) show = false;
                 if (catVal !== 'all' && catId !== catVal) show = false;
+                if (featuredVal === 'featured' && isFeatured !== '1') show = false;
+                if (featuredVal === 'not-featured' && isFeatured !== '0') show = false;
                 if (show) {
                     row.removeAttribute('data-filtered');
                 } else {
@@ -637,6 +670,7 @@ foreach ($sizes as $s) {
         }
         prodFilterInput.addEventListener('input', () => { prodApplyFilters(); prodResetPagination(); });
         prodCategoryFilter.addEventListener('change', () => { prodApplyFilters(); prodResetPagination(); });
+        prodFeaturedFilter.addEventListener('change', () => { prodApplyFilters(); prodResetPagination(); });
         // Add data-cat-id to each row for filtering
         Array.from(prodTable.rows).slice(1).forEach(row => {
             row.setAttribute('data-cat-id', row.children[2]?.getAttribute('data-cat-id') || '');

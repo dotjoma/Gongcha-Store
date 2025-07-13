@@ -391,7 +391,13 @@
                     }
                     msg.textContent = res.message;
                     msg.style.color = res.success ? '#27ae60' : '#be1635';
-                    if (res.success) setTimeout(() => window.location.reload(), 900);
+                    if (res.success) {
+                        // Redirect to clean URL without modal parameters
+                        setTimeout(() => {
+                            const cleanUrl = window.location.pathname;
+                            window.location.href = cleanUrl;
+                        }, 900);
+                    }
                 })
                 .catch(() => alert('Network error.'));
             });

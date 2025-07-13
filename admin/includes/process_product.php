@@ -24,6 +24,7 @@ try {
         $name = trim($_POST['name'] ?? '');
         $category_id = intval($_POST['category_id'] ?? 0);
         $sizes = $_POST['sizes'] ?? [];
+        $is_featured = isset($_POST['is_featured']) ? 1 : 0;
         $image = null;
         if (isset($_FILES['image']) && $_FILES['image']['tmp_name']) {
             $image = file_get_contents($_FILES['image']['tmp_name']);
@@ -32,8 +33,8 @@ try {
             $logger->error('Missing required fields for add', ['_POST' => $_POST]);
             respond(false, 'All fields are required.');
         }
-        $stmt = $conn->prepare('INSERT INTO products (name, category_id, image) VALUES (?, ?, ?)');
-        $ok = $stmt->execute([$name, $category_id, $image]);
+        $stmt = $conn->prepare('INSERT INTO products (name, category_id, image, is_featured) VALUES (?, ?, ?, ?)');
+        $ok = $stmt->execute([$name, $category_id, $image, $is_featured]);
         if ($ok) {
             $product_id = $conn->lastInsertId();
             // Insert sizes
@@ -51,6 +52,7 @@ try {
         $name = trim($_POST['name'] ?? '');
         $category_id = intval($_POST['category_id'] ?? 0);
         $sizes = $_POST['sizes'] ?? [];
+        $is_featured = isset($_POST['is_featured']) ? 1 : 0;
         $image = null;
         $updateImage = false;
         if (isset($_FILES['image']) && $_FILES['image']['tmp_name']) {
@@ -62,11 +64,11 @@ try {
             respond(false, 'All fields are required.');
         }
         if ($updateImage) {
-            $stmt = $conn->prepare('UPDATE products SET name=?, category_id=?, image=? WHERE id=?');
-            $ok = $stmt->execute([$name, $category_id, $image, $id]);
+            $stmt = $conn->prepare('UPDATE products SET name=?, category_id=?, image=?, is_featured=? WHERE id=?');
+            $ok = $stmt->execute([$name, $category_id, $image, $is_featured, $id]);
         } else {
-            $stmt = $conn->prepare('UPDATE products SET name=?, category_id=? WHERE id=?');
-            $ok = $stmt->execute([$name, $category_id, $id]);
+            $stmt = $conn->prepare('UPDATE products SET name=?, category_id=?, is_featured=? WHERE id=?');
+            $ok = $stmt->execute([$name, $category_id, $is_featured, $id]);
         }
         if ($ok) {
             // Update sizes: delete old, insert new

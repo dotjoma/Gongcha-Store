@@ -3,6 +3,7 @@ CREATE TABLE products (
     name VARCHAR(150) NOT NULL,
     category_id INT,
     image BLOB,
+    is_featured BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
